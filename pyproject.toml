@@ -1,0 +1,103 @@
+[tool]
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.0.0"
+tag_format = "$version"
+use_shortcuts = true
+update_changelog_on_bump = true
+annotated_tag = true
+
+[tool.aerich]
+tortoise_orm = "src.settings.DATABASE_CONFIG"
+location = "./migrations"
+src_folder = "./."
+
+[tool.cx_freeze]
+include_files = ["project_env", "pyproject.toml"]
+includes = ["src.faster"]
+excludes = []
+packages = ["src.my_tools"]
+
+[tool.build_docker]
+dockerfile = "docker/build_dockerfile" # dockerfile路径，相对于项目根目录
+docker_repo = "" # docker镜像的REPOSITORY，注意不要有大写字符
+
+
+[myproject]
+dev = true
+http_api_listen_host = "0.0.0.0"
+http_api_listen_port = 8082
+http_base_url = "/api/python_tools"
+
+[myproject.log]
+level = "debug"
+retention = 100  # 日志保留，数字代表数量，字符串描述时间，ex: "1 days"
+file_path = "logs" # 日志保存路径，相对于根目录
+file_level = "success"
+access_console_log = "info" # FastAPI的访问日志级别，如果设置为""，则不记录
+access_file_log = "" # 同上 FastAPI的访问日志是以INFO级别输出的
+
+[myproject.database]
+db_name = "" # 数据库名称，如果有环境变量，则以环境变量为准，否则以配置文件为准
+minsize = 1
+maxsize = 4
+pool_recycle = 60 # 连接池回收时间，单位 秒， 透传参数
+[myproject.database.master]
+host = "localhost"
+port = 3306
+user = "root"
+password = "satncs"
+[myproject.database.slave]
+host = "localhost"
+port = 3306
+user = "root"
+password = "satncs"
+
+[myproject.mq]
+bootstrap_servers = ["localhost:9092"] # 控制mq的host，如果有环境变量，则此值不起作用
+user = ""
+password = ""
+group = ""
+retry_interval = 5 # mq重连间隔
+num_partitions = 1 # 主题的分区数
+replication_factor = 3 # 主题的备份数量
+# [myproject.mq.replica_assignments] 与num_partitions/replication_factor冲突，不要同时使用
+[myproject.mq.topic_configs] # 主题消息的透传参数
+"min.insync.replicas" = 2
+"delete.retention.ms" = 10000
+
+[myproject.mq.topics] # 程序需要用到的所有主题
+[myproject.mq.topics.consumer]
+[myproject.mq.topics.producer]
+
+[myproject.redis]
+retry_interval = 10
+host = "localhost"
+port = 6379
+db = 0
+ws_db = 7
+user = ""
+password = ""
+namespace = ""
+
+[myproject.redis.sentinels]
+service = [["localhost", 6379]]
+service_name = "mymaster"
+
+[myproject.redis.more_config] # aioredis的透传参数
+max_connections = 10  # 连接池数量
+socket_timeout = 1  # 连接超时时间
+
+[myproject.redis.keys]
+
+[myproject.cache_config]
+lock_timeout = 1 # float 等待缓存锁超时时间，单位 秒
+wait_lock_time = 0.2 # float 等待锁释放的检查间隔，单位 秒
+min_cache_time = 800 # int 缓存最小时间，单位毫秒
+max_cache_time = 1600 # int 缓存最小时间，单位毫秒
+
+[myproject.dtm]
+host = "localhost"
+port = 36789
+
+
